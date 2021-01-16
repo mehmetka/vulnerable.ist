@@ -184,8 +184,8 @@ function saveCveConfiguration($cveConfiguration)
     $dbConnection = $GLOBALS['dbConnection'];
     $logger = $GLOBALS['logger'];
 
-    $sql = 'INSERT INTO cve_configurations (cve_id, type, vendor, product, version, module_name, library_id, versionStartIncluding, versionStartExcluding, versionEndIncluding, versionEndExcluding, vulnerable, source, operator)
-            VALUES (:cve_id, :type, :vendor, :product, :version, :module_name, :library_id, :versionStartIncluding, :versionStartExcluding, :versionEndIncluding, :versionEndExcluding, :vulnerable, :source, :operator)';
+    $sql = 'INSERT INTO cve_configurations (cve_id, type, vendor, product, version, module_name, library_id, versionStartIncluding, versionStartExcluding, versionEndIncluding, versionEndExcluding, vulnerable, source)
+            VALUES (:cve_id, :type, :vendor, :product, :version, :module_name, :library_id, :versionStartIncluding, :versionStartExcluding, :versionEndIncluding, :versionEndExcluding, :vulnerable, :source)';
 
     $stm = $dbConnection->prepare($sql);
     $stm->bindParam(":cve_id", $cveConfiguration['cve_id'], \PDO::PARAM_INT);
@@ -594,8 +594,6 @@ function getLibraryByVendorAndProductAndPkg($vendor, $product, $pkg)
 
     $library = [];
 
-    $logger->info('[DB] Getting library record by vendor and product and pkg');
-
     $sql = 'SELECT *
             FROM libraries
             WHERE vendor = :vendor AND product = :product AND pkg = :pkg';
@@ -652,8 +650,6 @@ function getLibraryByVendorAndProduct($vendor, $product)
     $logger = $GLOBALS['logger'];
 
     $library = [];
-
-    $logger->info("[DB] Getting library record by vendor($vendor) and product($product)");
 
     $sql = 'SELECT *
             FROM libraries
