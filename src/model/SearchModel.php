@@ -366,6 +366,137 @@ class SearchModel
         return $results;
     }
 
+    public function cveDetails($cve)
+    {
+        $cwes = [];
+
+        $sql = "SELECT id, uid, cve, description, v2Severity, v3Severity, v2VectorString, v3VectorString, v2BaseScore, v3BaseScore, v2ExploitabilityScore, v3ExploitabilityScore, v2ImpactScore, v3ImpactScore, created, updated  
+                FROM cves
+                WHERE cve = :cve";
+
+        $stm = $this->dbConnection->prepare($sql);
+        $stm->bindParam(':cve', $cve, \PDO::PARAM_STR);
+
+        $details = [];
+
+        if (!$stm->execute()) {
+            throw CustomException::dbError(503, json_encode($stm->errorInfo()), 'Details could not fetch. Please try again!');
+        }
+
+        while ($row = $stm->fetch(\PDO::FETCH_ASSOC)) {
+
+            $v2SeverityProps = $this->severities[$row['v2Severity']];
+            $v3SeverityProps = $this->severities[$row['v3Severity']];
+
+            $created = strtotime($row['created']);
+            $row['created'] = date('Y-m-d H:i:s', $created);
+
+            $updated = strtotime($row['updated']);
+            $row['updated'] = date('Y-m-d H:i:s', $updated);
+
+            $row['v2Severity'] = "<span class='label label-{$v2SeverityProps['label']}'>{$v2SeverityProps['severity']}</span>";
+            $row['v3Severity'] = "<span class='label label-{$v3SeverityProps['label']}'>{$v3SeverityProps['severity']}</span>";
+
+            $row['references'] = $this->getReferencesByCVE($row['id']);
+            $tmpCWEs = $this->getCwesByCve($row['id']);
+
+            foreach ($tmpCWEs as $cwe) {
+                $tmp['number'] = explode('CWE-', $cwe['cwe'])[1];
+                $tmp['cwe'] = $cwe['cwe'];
+
+                $cwes[] = $tmp;
+            }
+
+            $row['cwes'] = $cwes;
+
+            unset($row['id']);
+            $details = $row;
+        }
+
+        return $details;
+    }
+
+    public function npmDetails($npmId)
+    {
+        $sql = "SELECT nv.module_name,
+                       cve.cve,
+                       cwe.cwe,
+                       t.title   AS title,
+                       nfb.link  AS foundByLink,
+                       nfb.email AS foundByEmail,
+                       nfb.name  AS foundByName,
+                       nrb.email AS reportedByEmail,
+                       nrb.link  AS reportedByLink,
+                       nrb.name  AS reportedByName,
+                       nv.severity,
+                       nv.vulnerable_versions,
+                       nv.patched_versions,
+                       nv.exploitability,
+                       nv.overview,
+                       nv.recommendation,
+                       nv.created,
+                       nv.updated,
+                       nv.deleted
+                FROM npm_vulnerabilities nv
+                         LEFT JOIN titles t
+                                    ON nv.title_id = t.id
+                         LEFT JOIN cves cve
+                                    ON nv.cve_id = cve.id
+                         LEFT JOIN cwes cwe
+                                    ON nv.cwe_id = cwe.id
+                         LEFT JOIN npm_found_by nfb
+                                    ON nv.found_by_id = nfb.id
+                         LEFT JOIN npm_reported_by nrb
+                                    ON nv.reported_by_id = nrb.id
+                WHERE nv.npm_id = :id";
+
+        $stm = $this->dbConnection->prepare($sql);
+        $stm->bindParam(':id', $npmId, \PDO::PARAM_INT);
+
+        $details = [];
+
+        if (!$stm->execute()) {
+            throw CustomException::dbError(503, json_encode($stm->errorInfo()), 'Details could not fetch. Please try again!');
+        }
+
+        while ($row = $stm->fetch(\PDO::FETCH_ASSOC)) {
+
+            $severityProps = $this->severities[$row['severity']];
+            $row['severity'] = "<span class='label label-{$severityProps['label']}'>{$severityProps['severity']}</span>";
+
+            $created = strtotime($row['created']);
+            $row['created'] = date('Y-m-d H:i:s', $created);
+
+            $updated = strtotime($row['updated']);
+            $row['updated'] = date('Y-m-d H:i:s', $updated);
+
+            $row['foundByLink'] = $row['foundByLink'] ? $row['foundByLink'] : '-';
+            $row['foundByEmail'] = $row['foundByEmail'] ? $row['foundByEmail'] : '-';
+            $row['reportedByLink'] = $row['reportedByLink'] ? $row['reportedByLink'] : '-';
+            $row['reportedByEmail'] = $row['reportedByEmail'] ? $row['reportedByEmail'] : '-';
+
+            if ($row['cve']) {
+                $row['title'] .= $row['title'] . " (<a href='/cve/{$row['cve']}'>{$row['cve']}</a>)";
+                $row['cveExist'] = true;
+            } else {
+
+            }
+
+            if (!$row['deleted']) {
+                $deleted = strtotime($row['deleted']);
+                $row['deleted'] = date('Y-m-d H:i:s', $deleted);
+            } else {
+                $row['deleted'] = '-';
+            }
+
+            $row['references'] = $this->getReferencesByNpm($npmId);
+
+            $details = $row;
+        }
+
+        return $details;
+    }
+
     public function getReferencesByNpm($npmId)
     {
         $duplicateControl = [];
