@@ -123,16 +123,16 @@ foreach ($versions as $version) {
         $cve['description'] = $vulnerability['cve']['description']['description_data'][0]['value'];
         $cve['created'] = $vulnerability['publishedDate'];
         $cve['updated'] = $vulnerability['lastModifiedDate'];
-        $cve['v3Severity'] = $severities[$vulnerability['impact']['baseMetricV3']['cvssV3']['baseSeverity']];
-        $cve['v3VectorString'] = $vulnerability['impact']['baseMetricV3']['cvssV3']['vectorString'];
-        $cve['v3BaseScore'] = $vulnerability['impact']['baseMetricV3']['cvssV3']['baseScore'];
-        $cve['v3ExploitabilityScore'] = $vulnerability['impact']['baseMetricV3']['exploitabilityScore'];
-        $cve['v3ImpactScore'] = $vulnerability['impact']['baseMetricV3']['impactScore'];
-        $cve['v2Severity'] = $severities[$vulnerability['impact']['baseMetricV2']['severity']];
-        $cve['v2VectorString'] = $vulnerability['impact']['baseMetricV2']['cvssV2']['vectorString'];
-        $cve['v2BaseScore'] = $vulnerability['impact']['baseMetricV2']['cvssV2']['baseScore'];
-        $cve['v2ExploitabilityScore'] = $vulnerability['impact']['baseMetricV2']['exploitabilityScore'];
-        $cve['v2ImpactScore'] = $vulnerability['impact']['baseMetricV2']['impactScore'];
+        $cve['v3Severity'] = isset($vulnerability['impact']['baseMetricV3']['cvssV3']['baseSeverity']) ? $severities[$vulnerability['impact']['baseMetricV3']['cvssV3']['baseSeverity']] : null;
+        $cve['v3VectorString'] = isset($vulnerability['impact']['baseMetricV3']['cvssV3']['vectorString']) ? $vulnerability['impact']['baseMetricV3']['cvssV3']['vectorString'] : null;
+        $cve['v3BaseScore'] = isset($vulnerability['impact']['baseMetricV3']['cvssV3']['baseScore']) ? $vulnerability['impact']['baseMetricV3']['cvssV3']['baseScore'] : null;
+        $cve['v3ExploitabilityScore'] = isset($vulnerability['impact']['baseMetricV3']['exploitabilityScore']) ? $vulnerability['impact']['baseMetricV3']['exploitabilityScore'] : null;
+        $cve['v3ImpactScore'] = isset($vulnerability['impact']['baseMetricV3']['impactScore']) ? $vulnerability['impact']['baseMetricV3']['impactScore'] : null;
+        $cve['v2Severity'] = isset($vulnerability['impact']['baseMetricV2']['severity']) ? $severities[$vulnerability['impact']['baseMetricV2']['severity']] : null;
+        $cve['v2VectorString'] = isset($vulnerability['impact']['baseMetricV2']['cvssV2']['vectorString']) ? $vulnerability['impact']['baseMetricV2']['cvssV2']['vectorString'] : null;
+        $cve['v2BaseScore'] = isset($vulnerability['impact']['baseMetricV2']['cvssV2']['baseScore']) ? $vulnerability['impact']['baseMetricV2']['cvssV2']['baseScore'] : null;
+        $cve['v2ExploitabilityScore'] = isset($vulnerability['impact']['baseMetricV2']['exploitabilityScore']) ? $vulnerability['impact']['baseMetricV2']['exploitabilityScore'] : null;
+        $cve['v2ImpactScore'] = isset($vulnerability['impact']['baseMetricV2']['impactScore']) ? $vulnerability['impact']['baseMetricV2']['impactScore'] : null;
 
         if ($cveExist) {
 
