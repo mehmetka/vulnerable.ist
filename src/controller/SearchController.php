@@ -47,4 +47,15 @@ class SearchController extends Controller
         return $this->response(200, $resource);
     }
 
+    public function cveDetail(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $cve = str_replace('cve-', 'CVE-', $args['cve']);
+
+        $details = $this->searchModel->cveDetails($cve);
+        $this->data['title'] = $details['cve'];
+        $this->data['data'] = $details;
+
+        return $this->view->render($response, 'cve-details.mustache', $this->data);
+    }
+
 }
