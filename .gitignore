@@ -47,9 +47,6 @@ composer.lock
 /tests/
 /conf/conf.ini
 /backups
-scripts/folivora-library/
-scripts/rules.json
-scripts/sc_cookie.txt
 grumphp.yml
 /summary/
 /nvd/
