@@ -58,4 +58,15 @@ class SearchController extends Controller
         return $this->view->render($response, 'cve-details.mustache', $this->data);
     }
 
+    public function npmDetail(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $npmId = $args['npm'];
+        $details = $this->searchModel->npmDetails($npmId);
+
+        $this->data['title'] = 'Npm Detail';
+        $this->data['data'] = $details;
+
+        return $this->view->render($response, 'npm-details.mustache', $this->data);
+    }
+
 }
