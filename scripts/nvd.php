@@ -143,10 +143,13 @@ foreach ($versions as $version) {
             $cveId = $cveExist['id'];
             updateCveDetails($cveId, $cve);
             deleteVulnerabilitiesByCveId($cveId);
+            deleteCveReferencesByCveId($cveId);
 
         } else {
             $cveId = saveCve($cve);
         }
+
+        saveCVEReferences($cveId, $vulnerability['cve']['references']['reference_data']);
 
         if (isset($vulnerability['cve']['problemtype']['problemtype_data'][0]['description'][0]['value'])) {
 
@@ -203,7 +206,7 @@ foreach ($versions as $version) {
 
                     foreach ($child['cpe_match'] as $cpe) {
                         $cpe['cve_id'] = $cveId;
-                       prepareAndSaveCVEConfiguration($cpe);
+                        prepareAndSaveCVEConfiguration($cpe);
                     }
 
                 }

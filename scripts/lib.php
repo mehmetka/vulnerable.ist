@@ -505,6 +505,40 @@ function deleteVulnerabilitiesByCveId($cve)
     return true;
 }
 
+function saveCVEReferences($cveId, $references)
+{
+    foreach ($references as $reference) {
+        $refTmp = null;
+
+        $refTmp['cve'] = $cveId;
+        $refTmp['url'] = $reference['url'];
+        $refTmp['name'] = $reference['name'];
+        $refTmp['refsource'] = $reference['refsource'];
+        $refTmp['tags'] = implode(', ', $reference['tags']);
+
+        saveCveReference($refTmp);
+    }
+}
+
+function deleteCveReferencesByCveId($cve)
+{
+    $dbConnection = $GLOBALS['dbConnection'];
+    $logger = $GLOBALS['logger'];
+
+    $sql = 'DELETE FROM cve_references
+            WHERE cve = :cve_id';
+
+    $stm = $dbConnection->prepare($sql);
+    $stm->bindParam(':cve_id', $cve, \PDO::PARAM_INT);
+
+    if (!$stm->execute()) {
+        $logger->error('[DB] Could not delete cve references!' . json_encode($stm->errorInfo()));
+        return false;
+    }
+
+    return true;
+}
+
 function deleteNvdRecordById($id)
 {
     $dbConnection = $GLOBALS['dbConnection'];
