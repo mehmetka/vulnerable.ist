@@ -1,0 +1,14 @@
+{
+  "require": {
+    "slim/slim": "^3.0",
+    "monolog/monolog": "~1.0",
+    "andrewslince/slim3-mustache-view": "^1.0",
+    "guzzlehttp/guzzle": "~6.0",
+    "predis/predis": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src"
+    }
+  }
+}
