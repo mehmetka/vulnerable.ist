@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {{> head }}
+</head>
+<body class="horizontal dark">
+<div class="wrapper">
+    <main role="main" class="main-content">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-12">
+
+                    {{#data}}
+
+                    <div class="col-md-12 mb-12">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <h1>{{{title}}} {{{severity}}}</h1>
+                                <br>
+                                <small>Published:</small>
+                                <strong>{{created}}</strong>
+                                <br>
+                                <small>Updated:</small>
+                                <strong>{{updated}}</strong>
+                                <br>
+                                <small>Deleted:</small>
+                                <strong>{{deleted}}</strong>
+                                <hr>
+                                <div>
+                                    <strong>Overview</strong>
+                                    <p>{{overview}}</p>
+                                </div>
+                                <hr>
+                                <div>
+                                    <strong>Recommendation</strong>
+                                    <p>{{recommendation}}</p>
+                                </div>
+                                <hr>
+                                <div>
+                                    <strong>Vulnerable Versions: </strong> {{vulnerable_versions}}
+                                    <br>
+                                    <strong>Patched Versions: </strong> {{patched_versions}}
+                                </div>
+                                <hr>
+                                <div>
+                                    <strong>Found By</strong>
+                                    <ul>
+                                        <li><strong>Name: </strong>{{foundByName}}</li>
+                                        <li><strong>Email: </strong>{{foundByEmail}}</li>
+                                        <li><strong>Link: </strong>{{foundByLink}}</li>
+                                    </ul>
+                                </div>
+                                <hr>
+                                <div>
+                                    <strong>Reported By</strong>
+                                    <ul>
+                                        <li><strong>Name: </strong>{{reportedByName}}</li>
+                                        <li><strong>Email: </strong>{{reportedByEmail}}</li>
+                                        <li><strong>Link: </strong>{{reportedByLink}}</li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <h3><strong>References</strong></h3>
+                                    <ul>
+                                        <li><a href="https://cwe.mitre.org/data/definitions/{{cweNumber}}.html"
+                                               target="_blank">{{cwe}}</a></li>
+
+                                        {{#cveExist}}
+                                            <li><a href="https://nvd.nist.gov/vuln/detail/{{cve}}"
+                                                   target="_blank">NVD - {{cve}}</a></li>
+                                            <li><a href="https://www.cvedetails.com/cve/{{cve}}"
+                                                   target="_blank">CVE Details - {{cve}}</a></li>
+                                        {{/cveExist}}
+
+                                        {{#references}}
+                                            <li><a href="{{link}}" target="_blank">{{name}}</a></li>
+                                        {{/references}}
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    {{/data}}
+                </div> <!-- .col-12 -->
+                </div> <!-- .row -->
+            </div> <!-- .container-fluid -->
+    </main> <!-- main -->
+</div> <!-- .wrapper -->
+{{> include}}
+<script>
+    $(document).ready(function () {
+
+    });
+</script>
+</body>
+</html>

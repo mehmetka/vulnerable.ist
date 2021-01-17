@@ -453,6 +453,9 @@ class SearchModel
             $severityProps = $this->severities[$row['severity']];
             $row['severity'] = "<span class='badge badge-{$severityProps['label']}'>{$severityProps['severity']}</span>";
 
+            $tmpCWE = explode('-', $row['cwe']);
+            $row['cweNumber'] = $tmpCWE[1];
+
             $created = strtotime($row['created']);
             $row['created'] = date('Y-m-d H:i:s', $created);
 
@@ -516,6 +519,8 @@ class SearchModel
             if ($row['name'] === 'N/A') {
                 $row['name'] = $row['link'];
             }
+
+            $row['name'] = $row['name'] ? $row['name'] : $row['link'];
 
             $references[] = $row;
             $duplicateControl[$row['link']] = true;
