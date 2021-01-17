@@ -18,25 +18,6 @@ define('VULNERABLE_UNDEFINED', 2);
     NA("-");
  */
 
-$severities = [
-    'CRITICAL' => 4,
-    'HIGH' => 3,
-    'MEDIUM' => 2,
-    'LOW' => 1
-];
-
-$types = [
-    'a' => 0,
-    'o' => 1,
-    'h' => 2,
-    'unrecognized' => 3
-];
-
-$operators = [
-    'AND' => 0,
-    'OR' => 1
-];
-
 function downloadFile($link, $filePath, $auth = null)
 {
     $guzzle = $GLOBALS['guzzle'];
@@ -702,7 +683,7 @@ function getNpmFoundBy($reportedName)
     $dbConnection = $GLOBALS['dbConnection'];
     $logger = $GLOBALS['logger'];
 
-    $logger->info('[DB] Getting NVD Found by');
+    $logger->info("[DB] Getting NPM Found by: $reportedName");
 
     $sql = 'SELECT *
             FROM npm_found_by
@@ -730,7 +711,7 @@ function getNpmReportedBy($reportedName)
     $dbConnection = $GLOBALS['dbConnection'];
     $logger = $GLOBALS['logger'];
 
-    $logger->info('[DB] Getting NVD Reported by');
+    $logger->info("[DB] Getting NPM Reported by: $reportedName");
 
     $sql = 'SELECT *
             FROM npm_reported_by
@@ -758,7 +739,7 @@ function getNpmVulnerabilityByNpmId($npmId)
     $dbConnection = $GLOBALS['dbConnection'];
     $logger = $GLOBALS['logger'];
 
-    $logger->info('[DB] Getting NVD Reported by');
+    $logger->info("[DB] Getting NPM Vulnerability by ID: $npmId");
 
     $sql = 'SELECT *
             FROM npm_vulnerabilities
@@ -856,9 +837,8 @@ function parseNpmReference($referenceString)
     $tmpReferences = explode("\n", $referenceString);
 
     foreach ($tmpReferences as $reference) {
-        $exploded = explode('](', $reference);
-        $tmp['name'] = $exploded[0];
-        $tmp['link'] = $exploded[1];
+        $tmp['name'] = null;
+        $tmp['link'] = $reference;
 
         $references[] = $tmp;
     }
