@@ -170,10 +170,10 @@ class SearchModel
             $row['severity'] = $row['v3Severity'] == null ? $row['v2Severity'] : $row['v3Severity'];
 
             if ($row['severity'] == null) {
-                $row['severity'] = "<span class='label label-{$this->severities['UNDEFINED']['label']}'>{$this->severities['UNDEFINED']['severity']}</span>";
+                $row['severity'] = "<span class='badge badge-{$this->severities['UNDEFINED']['label']}'>{$this->severities['UNDEFINED']['severity']}</span>";
             } else {
                 $tmp = $this->severities[$row['severity']];
-                $row['severity'] = "<span class='label label-{$tmp['label']}'>{$tmp['severity']}</span>";
+                $row['severity'] = "<span class='badge badge-{$tmp['label']}'>{$tmp['severity']}</span>";
                 $row['rowSeverityClass'] = isset($tmp['rowSeverityClass']) ? $tmp['rowSeverityClass'] : null;
             }
 
@@ -201,15 +201,10 @@ class SearchModel
                        cc.versionEndExcluding,
                        cc.module_name,
                        c.v2Severity,
-                       c.v3Severity,
-                       cwe.cwe
+                       c.v3Severity
                 FROM cves c
                          INNER JOIN cve_configurations cc
                                     ON c.id = cc.cve_id
-                         INNER JOIN cve_cwes ccwe
-                                    ON c.id = ccwe.cve_id
-                         INNER JOIN cwes cwe
-                                    ON ccwe.cwe_id = cwe.id
                 WHERE MATCH(cc.product) AGAINST(:libraryName)
                 LIMIT 1000";
 
@@ -241,16 +236,16 @@ class SearchModel
             $row['severity'] = $row['v3Severity'] == null ? $row['v2Severity'] : $row['v3Severity'];
 
             if ($row['severity'] == null) {
-                $row['severity'] = "<span class='label label-{$this->severities['UNDEFINED']['label']}'>{$this->severities['UNDEFINED']['severity']}</span>";
+                $row['severity'] = "<span class='badge badge-{$this->severities['UNDEFINED']['label']}'>{$this->severities['UNDEFINED']['severity']}</span>";
             } else {
                 $tmp = $this->severities[$row['severity']];
-                $row['severity'] = "<span class='label label-{$tmp['label']}'>{$tmp['severity']}</span>";
+                $row['severity'] = "<span class='badge badge-{$tmp['label']}'>{$tmp['severity']}</span>";
                 $row['rowSeverityClass'] = isset($tmp['rowSeverityClass']) ? $tmp['rowSeverityClass'] : null;
             }
 
             $row['cveLink'] = "/cve/{$row['cve']}";
             $row['continueToRead'] = "/cve/{$row['cve']}";
-            $row['source'] = "<span class='label label-info'>nvd</span>";
+            $row['source'] = "<span class='badge badge-info'>nvd</span>";
             $this->unsetCveKeys($row);
             $results[] = $row;
         }
@@ -290,10 +285,10 @@ class SearchModel
             }
 
             $tmp = $this->severities[$row['severity']];
-            $row['severity'] = "<span class='label label-{$tmp['label']}'>{$tmp['severity']}</span>";
+            $row['severity'] = "<span class='badge badge-{$tmp['label']}'>{$tmp['severity']}</span>";
             $row['rowSeverityClass'] = isset($tmp['rowSeverityClass']) ? $tmp['rowSeverityClass'] : null;
 
-            $row['source'] = "<span class='label label-primary'>NPM</span>";
+            $row['source'] = "<span class='badge badge-primary'>NPM</span>";
             $row['continueToRead'] = "/npm/{$row['npm_id']}";
             $results[] = $row;
         }
@@ -315,15 +310,9 @@ class SearchModel
                        cc.versionEndExcluding,
                        cc.module_name,
                        c.v2Severity,
-                       c.v3Severity,
-                       cwe.cwe
+                       c.v3Severity
                 FROM cves c
-                         INNER JOIN cve_configurations cc
-                                    ON c.id = cc.cve_id
-                         INNER JOIN cve_cwes ccwe
-                                    ON c.id = ccwe.cve_id
-                         INNER JOIN cwes cwe
-                                    ON ccwe.cwe_id = cwe.id
+                INNER JOIN cve_configurations cc ON c.id = cc.cve_id
                 WHERE MATCH(cc.product) AGAINST(:libraryName)
                 LIMIT 1000";
 
@@ -349,16 +338,16 @@ class SearchModel
             $row['severity'] = $row['v3Severity'] == null ? $row['v2Severity'] : $row['v3Severity'];
 
             if ($row['severity'] == null) {
-                $row['severity'] = "<span class='label label-{$this->severities['UNDEFINED']['label']}'>{$this->severities['UNDEFINED']['severity']}</span>";
+                $row['severity'] = "<span class='badge badge-{$this->severities['UNDEFINED']['label']}'>{$this->severities['UNDEFINED']['severity']}</span>";
             } else {
                 $tmp = $this->severities[$row['severity']];
-                $row['severity'] = "<span class='label label-{$tmp['label']}'>{$tmp['severity']}</span>";
+                $row['severity'] = "<span class='badge badge-{$tmp['label']}'>{$tmp['severity']}</span>";
                 $row['rowSeverityClass'] = isset($tmp['rowSeverityClass']) ? $tmp['rowSeverityClass'] : null;
             }
 
             $row['cveLink'] = "/cve/{$row['cve']}";
             $row['continueToRead'] = "/cve/{$row['cve']}";
-            $row['source'] = "<span class='label label-info'>NVD</span>";
+            $row['source'] = "<span class='badge badge-info'>NVD</span>";
             $this->unsetCveKeys($row);
             $results[] = $row;
         }
@@ -394,8 +383,8 @@ class SearchModel
             $updated = strtotime($row['updated']);
             $row['updated'] = date('Y-m-d H:i:s', $updated);
 
-            $row['v2Severity'] = "<span class='label label-{$v2SeverityProps['label']}'>{$v2SeverityProps['severity']}</span>";
-            $row['v3Severity'] = "<span class='label label-{$v3SeverityProps['label']}'>{$v3SeverityProps['severity']}</span>";
+            $row['v2Severity'] = "<span class='badge badge-{$v2SeverityProps['label']}'>{$v2SeverityProps['severity']}</span>";
+            $row['v3Severity'] = "<span class='badge badge-{$v3SeverityProps['label']}'>{$v3SeverityProps['severity']}</span>";
 
             $row['references'] = $this->getReferencesByCVE($row['id']);
             $tmpCWEs = $this->getCwesByCve($row['id']);
@@ -462,7 +451,7 @@ class SearchModel
         while ($row = $stm->fetch(\PDO::FETCH_ASSOC)) {
 
             $severityProps = $this->severities[$row['severity']];
-            $row['severity'] = "<span class='label label-{$severityProps['label']}'>{$severityProps['severity']}</span>";
+            $row['severity'] = "<span class='badge badge-{$severityProps['label']}'>{$severityProps['severity']}</span>";
 
             $created = strtotime($row['created']);
             $row['created'] = date('Y-m-d H:i:s', $created);
@@ -566,7 +555,7 @@ class SearchModel
             $tagStr = '';
 
             foreach ($tags as $tag) {
-                $tagStr .= "<span class='label label-info'>$tag</span> ";
+                $tagStr .= "<span class='badge badge-info'>$tag</span> ";
             }
 
             $row['tagStr'] = $tagStr;
