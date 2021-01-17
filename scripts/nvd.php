@@ -117,6 +117,8 @@ foreach ($versions as $version) {
 
     foreach ($vulnerabilities['CVE_Items'] as $vulnerability) {
 
+        $logger->info("Processing: {$vulnerability['cve']['CVE_data_meta']['ID']}");
+
         $cveExist = getCveByCveId($vulnerability['cve']['CVE_data_meta']['ID']);
 
         $cve['cve'] = $vulnerability['cve']['CVE_data_meta']['ID'];
@@ -136,9 +138,14 @@ foreach ($versions as $version) {
 
         if ($cveExist) {
 
+            $logger->info("{$vulnerability['cve']['CVE_data_meta']['ID']} exists on db");
+
             if ($cveExist['updated'] == $vulnerability['lastModifiedDate']) {
+                $logger->info("No Updates for {$vulnerability['cve']['CVE_data_meta']['ID']}, will continue.");
                 continue;
             }
+
+            $logger->info("There are updates for {$vulnerability['cve']['CVE_data_meta']['ID']}.");
 
             $cveId = $cveExist['id'];
             updateCveDetails($cveId, $cve);
@@ -146,6 +153,7 @@ foreach ($versions as $version) {
             deleteCveReferencesByCveId($cveId);
 
         } else {
+            $logger->info("{$vulnerability['cve']['CVE_data_meta']['ID']} not exists on db");
             $cveId = saveCve($cve);
         }
 
@@ -170,7 +178,10 @@ foreach ($versions as $version) {
 
                 if (isset($node['cpe_match'])) {
 
-                    if (count($node['cpe_match'])) {
+                    $cpeMatchCount = count($node['cpe_match']);
+                    $logger->info("CPE Match count: $cpeMatchCount for {$vulnerability['cve']['CVE_data_meta']['ID']}");
+
+                    if ($cpeMatchCount) {
 
                         foreach ($node['cpe_match'] as $cpe) {
                             $cpe['cve_id'] = $cveId;
@@ -183,7 +194,10 @@ foreach ($versions as $version) {
 
                     foreach ($node['children'] as $child) {
 
-                        if (count($child['cpe_match'])) {
+                        $cpeMatchCount = count($child['cpe_match']);
+                        $logger->info("CPE Match count: $cpeMatchCount for {$vulnerability['cve']['CVE_data_meta']['ID']}");
+
+                        if ($cpeMatchCount) {
 
                             foreach ($child['cpe_match'] as $cpe) {
                                 $cpe['cve_id'] = $cveId;
@@ -202,7 +216,10 @@ foreach ($versions as $version) {
 
             foreach ($vulnerability['configurations']['nodes'][0]['children'] as $child) {
 
-                if (count($child['cpe_match'])) {
+                $cpeMatchCount = count($child['cpe_match']);
+                $logger->info("CPE Match count: $cpeMatchCount for {$vulnerability['cve']['CVE_data_meta']['ID']}");
+
+                if ($cpeMatchCount) {
 
                     foreach ($child['cpe_match'] as $cpe) {
                         $cpe['cve_id'] = $cveId;
