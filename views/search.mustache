@@ -63,6 +63,8 @@
                         </div>
                     </div> <!-- simple table -->
 
+
+
                     </script>
                     <%={{ }}=%>
 
@@ -82,6 +84,16 @@
         $("#search").focus();
 
         $("#btnSearch").on('click', function (e) {
+            searchOperations()
+        });
+
+        $('#search').bind('keypress', function (e) {
+            if (e.keyCode == 13) {
+                searchOperations()
+            }
+        });
+
+        function searchOperations() {
             var searchParam = $("#search").val();
 
             if (searchParam.length >= 3) {
@@ -97,14 +109,12 @@
                             data: 'param=' + searchParam,
                             dataType: "json",
                             success: function (data, status, xhr) {
-
                                 var template = $('#results-script-id').html();
                                 Mustache.parse(template);
                                 var rendered = Mustache.render(template, data);
                                 $("#results-table-div-id").html(rendered);
 
                                 latestSearchParam = searchParam;
-
                             },
                             error: function (xhr, status, error) {
                                 alert(xhr.responseJSON.message)
@@ -119,47 +129,7 @@
             } else {
                 alert('Min length is 3')
             }
-        });
-
-        $('#search').bind('keypress', function (e) {
-            if (e.keyCode == 13) {
-                var searchParam = $("#search").val();
-
-                if (searchParam.length >= 3) {
-
-                    if (searchParam !== latestSearchParam) {
-
-                        if (searchParam.includes('CVE-') || searchParam.includes('cve-')) {
-                            window.location.replace('/cve/' + searchParam);
-                        } else {
-                            $.ajax({
-                                type: 'POST',
-                                url: '/search',
-                                data: 'param=' + searchParam,
-                                dataType: "json",
-                                success: function (data, status, xhr) {
-                                    var template = $('#results-script-id').html();
-                                    Mustache.parse(template);
-                                    var rendered = Mustache.render(template, data);
-                                    $("#results-table-div-id").html(rendered);
-
-                                    latestSearchParam = searchParam;
-                                },
-                                error: function (xhr, status, error) {
-                                    alert(xhr.responseJSON.message)
-                                }
-                            });
-                        }
-
-                    } else {
-                        console.log("Same search param")
-                    }
-
-                } else {
-                    alert('Min length is 3')
-                }
-            }
-        });
+        }
 
     });
 </script>
