@@ -33,37 +33,36 @@
 
                     {{=<% %>=}}
                     <script id="results-script-id" type="text/x-handlebars-template">
-                        <h1 class="font-md"> Search Result:
-                            <small class="text-danger">{{count}}</small>
-                        </h1>
-                        <br>
 
-                        <table id="results-table-id"
-                               class="table table-responsive table-striped table-bordered table-hover" width="100%">
-                            <thead>
-                            <tr>
-                                <th>CVE</th>
-                                <th data-hide="phone,tablet">Source</th>
-                                <th>Severity</th>
-                                <th data-hide="phone,tablet">Description</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {{#data}}
-                                <tr class="{{rowSeverityClass}}">
-                                    <td>
-                                        <a href="{{cveLink}}">{{cve}}</a>
-                                    </td>
-                                    <td>{{{source}}}</td>
-                                    <td>{{{severity}}}</td>
-                                    <td>{{description}}
-                                        <a href="{{continueToRead}}"><strong>continue to read</strong></a>
-                                    </td>
-                                </tr>
-                            {{/data}}
-                            </tbody>
-                        </table>
+                       <div class="card mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">Search Result:</strong> <i class="text-danger">{{count}}</i>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-striped table-bordered" id="results-table-id" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th>CVE</th>
+                                        <th data-hide="phone,tablet">Source</th>
+                                        <th>Severity</th>
+                                        <th data-hide="phone,tablet">Description</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {{#data}}
+                                        <tr class="{{rowSeverityClass}}">
+                                            <td><a href="{{cveLink}}">{{cve}}</a></td>
+                                            <td>{{{source}}}</td>
+                                            <td>{{{severity}}}</td>
+                                            <td>{{description}}<a href="{{continueToRead}}"><strong>continue to read</strong></a></td>
+                                        </tr>
+                                    {{/data}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div> <!-- simple table -->
 
                     </script>
                     <%={{ }}=%>
@@ -79,13 +78,7 @@
 <script>
     $(document).ready(function () {
 
-        var responsiveHelper_dt_basic = undefined;
         var latestSearchParam = '';
-
-        var breakpointDefinition = {
-            tablet: 1024,
-            phone: 480
-        };
 
         $("#search").focus();
 
@@ -95,8 +88,6 @@
             if (searchParam.length >= 3) {
 
                 if (searchParam !== latestSearchParam) {
-
-                    $("#ajax-loader").removeClass('hidden');
 
                     if (searchParam.includes('CVE-') || searchParam.includes('cve-')) {
                         window.location.replace('/cve/' + searchParam);
@@ -108,41 +99,16 @@
                             dataType: "json",
                             success: function (data, status, xhr) {
 
-                                $("#ajax-loader").addClass('hidden');
-
                                 var template = $('#results-script-id').html();
                                 Mustache.parse(template);
                                 var rendered = Mustache.render(template, data);
                                 $("#results-table-div-id").html(rendered);
 
-                                $('#results-table-id').dataTable({
-                                    'paging': false,
-                                    'lengthChange': true,
-                                    'searching': false,
-                                    'ordering': true,
-                                    'info': true,
-                                    'autoWidth': true,
-                                    'responsive': true,
-                                    "preDrawCallback": function () {
-                                        if (!responsiveHelper_dt_basic) {
-                                            responsiveHelper_dt_basic = new ResponsiveDatatablesHelper($('#results-table-id'), breakpointDefinition);
-                                        }
-                                    },
-                                    "columnDefs": [
-                                        {"width": "12%", "targets": 0},
-                                        {"width": "6%", "targets": 1}
-                                    ]
-                                });
-
                                 latestSearchParam = searchParam;
 
                             },
                             error: function (xhr, status, error) {
-                                $("#ajax-loader").addClass('hidden');
                                 alert(xhr.responseJSON.message)
-                            },
-                            complete: function () {
-                                $("#ajax-loader").addClass('hidden');
                             }
                         });
                     }
@@ -156,19 +122,13 @@
             }
         });
 
-        $("#search").keypress(function (event) {
-
-            var keycode = (event.keyCode ? event.keyCode : event.which);
-
-            if (keycode === '13') {
-
+        $('#search').bind('keypress', function (e) {
+            if (e.keyCode == 13) {
                 var searchParam = $("#search").val();
 
                 if (searchParam.length >= 3) {
 
                     if (searchParam !== latestSearchParam) {
-
-                        $("#ajax-loader").removeClass('hidden');
 
                         if (searchParam.includes('CVE-') || searchParam.includes('cve-')) {
                             window.location.replace('/cve/' + searchParam);
@@ -179,50 +139,21 @@
                                 data: 'param=' + searchParam,
                                 dataType: "json",
                                 success: function (data, status, xhr) {
-
-                                    $("#ajax-loader").addClass('hidden');
-
                                     var template = $('#results-script-id').html();
                                     Mustache.parse(template);
                                     var rendered = Mustache.render(template, data);
                                     $("#results-table-div-id").html(rendered);
 
-                                    $('#results-table-id').dataTable({
-                                        'paging': false,
-                                        'lengthChange': true,
-                                        'searching': false,
-                                        'ordering': true,
-                                        'info': true,
-                                        'autoWidth': true,
-                                        'responsive': true,
-                                        "preDrawCallback": function () {
-                                            if (!responsiveHelper_dt_basic) {
-                                                responsiveHelper_dt_basic = new ResponsiveDatatablesHelper($('#results-table-id'), breakpointDefinition);
-                                            }
-                                        },
-                                        "columnDefs": [
-                                            {"width": "12%", "targets": 0},
-                                            {"width": "6%", "targets": 1}
-                                        ]
-                                    });
-
                                     latestSearchParam = searchParam;
-
                                 },
                                 error: function (xhr, status, error) {
-
-                                    $("#ajax-loader").addClass('hidden');
                                     alert(xhr.responseJSON.message)
-
                                 },
                                 complete: function () {
-
                                     $("#ajax-loader").addClass('hidden');
-
                                 }
                             });
                         }
-
 
                     } else {
                         console.log("Same search param")
@@ -231,7 +162,6 @@
                 } else {
                     alert('Min length is 3')
                 }
-
             }
         });
 
