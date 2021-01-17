@@ -13,7 +13,6 @@
                     <h1 class="text-center">
                         Search
                         <span class="semi-bold">Vulnerable Libraries</span>
-                        <img id="ajax-loader" class="hidden" src="">
                     </h1>
 
                     <br>
@@ -148,9 +147,6 @@
                                 },
                                 error: function (xhr, status, error) {
                                     alert(xhr.responseJSON.message)
-                                },
-                                complete: function () {
-                                    $("#ajax-loader").addClass('hidden');
                                 }
                             });
                         }
