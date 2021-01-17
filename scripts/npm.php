@@ -35,6 +35,13 @@ $guzzle = new Client([
     'debug' => false
 ]);
 
+$severities = [
+    'critical' => 4,
+    'high' => 3,
+    'moderate' => 2,
+    'low' => 1
+];
+
 for ($i = 1; $i < 74; $i++) {
     $link = 'https://registry.npmjs.org/-/npm/v1/security/advisories?perPage=20&page=' . $i;
     echo "Fetching => $link\n";
@@ -108,7 +115,7 @@ for ($i = 1; $i < 74; $i++) {
             $tmp['cve_id'] = $cveDetail['id'];
         }
 
-        if ($vulnerability['references'] != null) {
+        if ($vulnerability['references']) {
             $references = parseNpmReference($vulnerability['references']);
 
             foreach ($references as $reference) {
