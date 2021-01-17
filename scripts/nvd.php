@@ -35,6 +35,25 @@ $guzzle = new Client([
     'debug' => false
 ]);
 
+$severities = [
+    'CRITICAL' => 4,
+    'HIGH' => 3,
+    'MEDIUM' => 2,
+    'LOW' => 1
+];
+
+$types = [
+    'a' => 0,
+    'o' => 1,
+    'h' => 2,
+    'unrecognized' => 3
+];
+
+$operators = [
+    'AND' => 0,
+    'OR' => 1
+];
+
 $versions = [
     '2002',
     '2003',
